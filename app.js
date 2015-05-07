@@ -2,31 +2,43 @@
 
 var app = angular.module('demoApp', ['jp.ng-bs-animated-button']);
 
-app.controller('demo1Ctrl', function($scope, $timeout) {
-
-  $scope.isSubmitting = null;
-  $scope.result = null;
+app.controller('demo1Ctrl', function($q, $scope, $interval, $timeout, jpNgBsButtonController) {
+  
+  $scope.btnCtrl = jpNgBsButtonController.createSave();
 
   $scope.fakeSubmit = function() {
-    $scope.isSubmitting = true;
+    var dfd = $q.defer();
+    
+    $scope.btnCtrl.start(dfd.promise);
     $timeout(function(){
-      $scope.result = 'success';
+      dfd.resolve();
     }, 2000);
   };
+  
+  $interval($scope.fakeSubmit, 6000);
+  
+  $scope.fakeSubmit();
 
 });
 
-app.controller('demo2Ctrl', function($scope, $timeout) {
+app.controller('demo2Ctrl', function($q, $scope, $interval, $timeout, jpNgBsButtonController) {
 
-  $scope.isSubmitting = null;
-  $scope.result = null;
+  $scope.btnCtrl = jpNgBsButtonController.createReset({
+    buttonErrorText: 'Failed to reset'
+  });
 
   $scope.fakeSubmit = function() {
-    $scope.isSubmitting = true;
+    var dfd = $q.defer();
+    
+    $scope.btnCtrl.start(dfd.promise);
     $timeout(function(){
-      $scope.result = 'error';
+      dfd.reject();
     }, 2000);
   };
+  
+  $interval($scope.fakeSubmit, 6000);
+  
+  $scope.fakeSubmit();
 
 });
 
